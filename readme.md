@@ -18,11 +18,11 @@ docker pull lez0sec/dnsmasq
 
 Run container:
 ```bash
-docker run --rm -it -p <ip_to_bind_to>:53:53/tcp -p <ip_to_bind_to>:53:53/udp -v "`pwd`/spoof.hosts:/tmp/spoof.hosts" --cap-add=NET_ADMIN dns_spoof
+docker run --rm -it -p <ip_to_bind_to>:53:53/tcp -p <ip_to_bind_to>:53:53/udp -v "$spoofed_hosts:/etc/dnsmasq.d/wildcards:ro" --cap-add=NET_ADMIN lez0sec/dnsmasq
 ```
 
 Alternatively you can use the wrapper script ```spoofscript.sh``` to run the container.
 
 ## Some notes
 In order to disable the existing local name resolution service (although you don't really need this unless you want to bind to localhost):
-sudo systemctl stop systemd-resolved.service	
+```sudo systemctl stop systemd-resolved.service```
