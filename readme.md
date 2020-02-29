@@ -1,5 +1,5 @@
 ## Description
-Docker container to make DNS spoofing with dnsmasq hassle free
+Docker container to start a quick&dirty DHCP server with dnsmasq (DNS disabled)
 
 ## Relevant Docker cheatsheet
 
@@ -8,21 +8,19 @@ If you don't use Docker too often and tend to forget the commands, these can com
 Build docker file locally:
 
 ```bash
-docker build -t "dns_spoof" /path/to/directory/containing/dockerfile
+docker build -t dhcp-host .
+docker run --rm -it -v "`pwd`/append.conf:/tmp/append.config:ro" --net=host --cap-add=NET_ADMIN dhcp-host
 ```
+
+NET-ADMIN permissions are required to allow dnsmasq to return the DHCP response.
 
 Build image from Docker Hub:
 ```bash
-docker pull lez0sec/dnsmasq
+docker pull lez0sec/dnsmasq-dhcp
 ```
 
 Run container:
+You need to pass it a config file that will append to what is already configured in dnsmasq.conf:
 ```bash
-docker run --rm -it -p <ip_to_bind_to>:53:53/tcp -p <ip_to_bind_to>:53:53/udp -v "$spoofed_hosts:/etc/dnsmasq.d/wildcards:ro" --cap-add=NET_ADMIN lez0sec/dnsmasq
+docker run --rm -it -v "`pwd`/append.conf:/tmp/append.config:ro" --net=host --cap-add=NET_ADMIN lez0sec/dnsmasq-dhcp
 ```
-
-Alternatively you can use the wrapper script ```spoofscript.sh``` to run the container.
-
-## Some notes
-In order to disable the existing local name resolution service (although you don't really need this unless you want to bind to localhost):
-```sudo systemctl stop systemd-resolved.service```
